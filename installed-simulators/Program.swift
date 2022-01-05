@@ -20,6 +20,7 @@ import Foundation
             let rawList = try await run(command: URL(fileURLWithPath: "/usr/bin/xcrun"), arguments: arguments)
             let list = process(list: rawList)
             let e = generateEnum(from: list)
+            print(e)
             if let data = e.data(using: .utf8) {
                 let url = URL(fileURLWithPath: "./Simulator.swift")
                 try data.write(to: url)
@@ -140,7 +141,7 @@ import Foundation
                 .replacingOccurrences(of: ")", with: "")
                 .replacingOccurrences(of: ".", with: "_")
                 .replacingOccurrences(of: "-", with: "")
-            retVal += "\tstatic var \(name): PreviewDevice { PreviewDevice(rawValue: \"\(simulator)\") }\n"
+            retVal += "\tstatic let \(name) = PreviewDevice(rawValue: \"\(simulator)\")\n"
         }
         retVal += "}\n"
         return retVal
