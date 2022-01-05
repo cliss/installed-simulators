@@ -45,6 +45,8 @@ Everything below is optional; defaults are provided.
   The name of the `enum` that is created; this is also the filename. Defaults to `Simulator`.
 * `--xcrunpath <xcrun path>`  
   The path to `xcrun`. Defaults to `/usr/bin/xcrun`.
+* `--version`  
+  Shows the version number.
 
 ## Installation in Xcode
 

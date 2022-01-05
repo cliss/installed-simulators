@@ -19,7 +19,9 @@ struct Export: ParsableCommand {
     var xcrunpath: String = "/usr/bin/xcrun"
     
     static var configuration: CommandConfiguration {
-        CommandConfiguration(commandName: "installed-simulators", abstract: "Creates a file that has a series of PreviewContext items, one per installed iOS simulator.")
+        CommandConfiguration(commandName: "installed-simulators",
+                             abstract: "Creates a file that has a series of PreviewContext items, one per installed iOS simulator.",
+                             version: "2022.1")
     }
 
     func runAsync() async throws {
