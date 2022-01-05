@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C900170E2784ECE1005A99FE /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900170D2784ECE1005A99FE /* Program.swift */; };
+		C90017172785295F005A99FE /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = C90017162785295F005A99FE /* ArgumentParser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C90017172785295F005A99FE /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +82,9 @@
 			dependencies = (
 			);
 			name = "installed-simulators";
+			packageProductDependencies = (
+				C90017162785295F005A99FE /* ArgumentParser */,
+			);
 			productName = "installed-simulators";
 			productReference = C900170A2784ECE1005A99FE /* installed-simulators */;
 			productType = "com.apple.product-type.tool";
@@ -108,6 +113,9 @@
 				Base,
 			);
 			mainGroup = C90017012784ECE1005A99FE;
+			packageReferences = (
+				C90017152785295F005A99FE /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+			);
 			productRefGroup = C900170B2784ECE1005A99FE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -288,6 +296,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C90017152785295F005A99FE /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C90017162785295F005A99FE /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C90017152785295F005A99FE /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C90017022784ECE1005A99FE /* Project object */;
 }

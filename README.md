@@ -14,7 +14,7 @@ Once the file is created, you can do something like this:
 // Simulator.swift
 enum Simulator {
     // ...
-    static var iPhone13Pro: PreviewDevice { PreviewDevice(rawValue: "iPhone 13 Pro") }
+    static let iPhone13Pro = PreviewDevice(rawValue: "iPhone 13 Pro")
     // ...
 }
 
@@ -37,10 +37,3 @@ struct SomeViewPreviews: PreviewProvider {
 
 tbd
 
-## To Do
-
-- [ ] Add the below as Github issues
-- [ ] Accept `xcrun` path as a parameter
-- [ ] Accept output type name as a parameter
-- [ ] Accept output file path as a parameter
-- [ ] Return non-zero error codes upon error

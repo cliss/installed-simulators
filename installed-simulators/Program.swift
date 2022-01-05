@@ -6,9 +6,23 @@
 //
 
 import Foundation
+import ArgumentParser
 
-@main struct Main {
-    static func main() async {
+struct Export: ParsableCommand {
+    @Option(help: "The path for the output file.")
+    var exportPath: String = "."
+    
+    @Option(help: "The name of the enum that is output.")
+    var typeName: String = "Simulator"
+    
+    @Option(help: "The path to the xcrun command.")
+    var xcrunpath: String = "/usr/bin/xcrun"
+    
+    static var configuration: CommandConfiguration {
+        CommandConfiguration(commandName: "installed-simulators", abstract: "Creates a file that has a series of PreviewContext items, one per installed iOS simulator.")
+    }
+
+    func runAsync() async throws {
         let arguments = [
             "simctl",
             "list",
@@ -17,29 +31,21 @@ import Foundation
         ]
         
         do {
-            let rawList = try await run(command: URL(fileURLWithPath: "/usr/bin/xcrun"), arguments: arguments)
+            let rawList = try await run(command: URL(fileURLWithPath: self.xcrunpath),
+                                        arguments: arguments)
             let list = process(list: rawList)
             let e = generateEnum(from: list)
             if let data = e.data(using: .utf8) {
-                let url = URL(fileURLWithPath: "./Simulator.swift")
+                let url = URL(fileURLWithPath: "\(exportPath)/\(self.typeName).swift")
                 try data.write(to: url)
-                print("Wrote to \(url.absoluteString)")
+                print("Wrote to \(url.absoluteString.replacingOccurrences(of: "file://", with: ""))")
             }
-        } catch RunCommandErrors.noDataReturned {
-            print("No data was returned from the external command")
-        } catch RunCommandErrors.commandError(let error) {
-            print("An error was returned from the external command:")
-            print("")
-            print(error)
-        } catch let RunCommandErrors.couldNotReadFromPipe(named, error) {
-            print("Could not read from the \(named) pipe: \n\(error)")
-        } catch {
-            print("Unknown error:\n\(error)")
         }
+        // No need to catch; it will be reported to the user by the system.
     }
     
     // https://stackoverflow.com/a/67846989/98199
-    static func run(command: URL, arguments: [String] = []) async throws -> String {
+    func run(command: URL, arguments: [String] = []) async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             let task = Process()
             task.executableURL = command
@@ -62,11 +68,11 @@ import Foundation
                         // Xcode keeps throwing weird errors. Should investigate.
                         !error.contains("Unknown binary with magic")
                     {
-                        continuation.resume(throwing: RunCommandErrors.commandError(error))
+                        continuation.resume(throwing: ExportError.commandError(error))
                     } else if let output = output {
                         continuation.resume(returning: output)
                     } else {
-                        continuation.resume(throwing: RunCommandErrors.noDataReturned)
+                        continuation.resume(throwing: ExportError.noDataReturned)
                     }
                 } catch {
                     continuation.resume(throwing: error)
@@ -80,8 +86,8 @@ import Foundation
             }
         }
     }
-
-    static func string(from pipe: Pipe, named: String) throws -> String? {
+    
+    func string(from pipe: Pipe, named: String) throws -> String? {
         do {
             if let data = try pipe.fileHandleForReading.readToEnd() {
                 return String(data: data, encoding: .utf8)
@@ -90,18 +96,11 @@ import Foundation
             }
         } catch {
             print("Could not read from \(named) pipe:\n\(error)")
-            throw RunCommandErrors.couldNotReadFromPipe(named: named, error: error)
+            throw ExportError.couldNotReadFromPipe(named: named, error: error)
         }
     }
-
-    enum RunCommandErrors: LocalizedError {
-        case couldNotReadFromPipe(named: String, error: Error)
-        case commandError(String)
-        case noDataReturned
-        case runError(Error)
-    }
     
-    static func process(list: String) -> [String] {
+    func process(list: String) -> [String] {
         let lines = list.split(separator: "\n")
         let simulators = lines.filter { $0.starts(with: "    ") }
         let retVal = simulators.compactMap { sim -> String? in
@@ -110,10 +109,10 @@ import Foundation
             // We want everything from the start index → GUID, less the leading/trailing whitespace.
             return sim[sim.startIndex...range.lowerBound].trimmingCharacters(in: .whitespaces)
         }
-        return retVal//.map { $0.trimmingCharacters(in: .whitespaces) }
+        return retVal
     }
     
-    static func generateEnum(from list: [String]) -> String {
+    func generateEnum(from list: [String]) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
@@ -121,7 +120,7 @@ import Foundation
         var retVal =
         """
         //
-        //  Simulator.swift
+        //  \(self.typeName).swift
         //
         //  This file was auto-generated by the installed-simulators tool.
         //  It was generated at \(formatter.string(from: .now)).
@@ -133,7 +132,7 @@ import Foundation
         
         import SwiftUI
         
-        enum Simulator {
+        enum \(self.typeName) {
         
         """
         list.forEach { simulator in
@@ -145,5 +144,32 @@ import Foundation
         retVal += "}\n"
         return retVal
     }
+}
+
+@main
+struct MainApp {
+    static func main() async {
+        do {
+            if let command = try Export.parseAsRoot() as? Export {
+                try await command.runAsync()
+            }
+        } catch {
+            Export.exit(withError: error)
+        }
+    }
+}
+
+enum ExportError: LocalizedError {
+    case couldNotReadFromPipe(named: String, error: Error)
+    case commandError(String)
+    case noDataReturned
     
+    var errorDescription: String? {
+        switch self {
+        case let .couldNotReadFromPipe(named, error):
+            return "Could not read from \(named) pipe: \(error)"
+        case let .commandError(error): return "Error from xcrun: \(error)"
+        case .noDataReturned: return "No data was returned from xcrun"
+        }
+    }
 }
