@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		C900170A2784ECE1005A99FE /* installed-simulators */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "installed-simulators"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C900170D2784ECE1005A99FE /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
-		C900171427851524005A99FE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		C900171427851524005A99FE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +42,7 @@
 		C90017012784ECE1005A99FE = {
 			isa = PBXGroup;
 			children = (
-				C900171427851524005A99FE /* README */,
+				C900171427851524005A99FE /* README.md */,
 				C900170C2784ECE1005A99FE /* installed-simulators */,
 				C900170B2784ECE1005A99FE /* Products */,
 			);
