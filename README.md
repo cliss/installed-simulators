@@ -33,6 +33,19 @@ struct SomeViewPreviews: PreviewProvider {
 }
 ```
 
+## Options
+
+Everything below is optional; defaults are provided.
+
+* `-h` or `--help`: Show help
+* `--export-path <export path>`  
+  Specifies where the file should be created. If a filename is provided, it is ignored.
+  Defaults to the current directory.
+* `--type-name <type name>`  
+  The name of the `enum` that is created; this is also the filename. Defaults to `Simulator`.
+* `--xcrunpath <xcrun path>`  
+  The path to `xcrun`. Defaults to `/usr/bin/xcrun`.
+
 ## Installation in Xcode
 
 tbd
