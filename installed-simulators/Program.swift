@@ -139,11 +139,8 @@ import Foundation
         """
         list.forEach { simulator in
             let name = simulator
-                .replacingOccurrences(of: " ", with: "")
-                .replacingOccurrences(of: "(", with: "")
-                .replacingOccurrences(of: ")", with: "")
-                .replacingOccurrences(of: ".", with: "_")
-                .replacingOccurrences(of: "-", with: "")
+                .replacingOccurrences(of: #"[\s\(\)\-]+"#, with: "", options: .regularExpression)
+                .replacingOccurrences(of: #"[\.]+"#, with: "_", options: .regularExpression)
             retVal += "\tstatic let \(name) = PreviewDevice(rawValue: \"\(simulator)\")\n"
         }
         retVal += "}\n"
