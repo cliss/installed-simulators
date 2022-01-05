@@ -150,8 +150,12 @@ struct Export: ParsableCommand {
 struct MainApp {
     static func main() async {
         do {
-            if let command = try Export.parseAsRoot() as? Export {
-                try await command.runAsync()
+            var command = try Export.parseAsRoot()
+            if let export = command as? Export {
+                try await export.runAsync()
+            } else {
+                // If the user asks for help, that's an instance of `HelpCommand`.
+                try command.run()
             }
         } catch {
             Export.exit(withError: error)
