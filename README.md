@@ -66,3 +66,26 @@ This is the quick-and-dirty version of installation instrucitons; you may wish t
 7. Move that new `Run Script` phase toward the top of your list of operations; generally speaking, just below `Dependencies` is appropriate.
 8. Once you've built at least once, add the newly created file (defaults to `Simulator.swift`) to your project as you would any other file
 9. Now you can easily do SwiftUI previews for other devices!
+
+## Installation in Xcode Cloud
+
+[Xcode Cloud](https://developer.apple.com/xcode-cloud/) is, as of mid-January 2022, a beta service provided by Apple. Xcode Cloud provides an Apple-provided [CI](https://en.wikipedia.org/wiki/Continuous_integration) pipeline hosted in Apple's cloud.
+
+Xcode Cloud does **not** run the pre-build phase established above. Instead, you must create a bespoke [custom build script](https://developer.apple.com/documentation/xcode/writing-custom-build-scripts) that Xcode Cloud will run as a pre-build step. This step can live simultaneously with your `Run Script Phase` established above.
+
+To create a script for Xcode Cloud:
+
+0. Build a binary &mdash; or get one from [Releases](https://github.com/cliss/installed-simulators/releases) &mdash; and put it in your project folder, peer with your `xcodeproj`.
+1. Right-click on your project in the `Project Navigator`
+2. Select `New Group` and name the group `ci_scripts`
+3. Right-click on the new `ci_scripts` group/folder, select `New File...`, and then select the `Shell Script` template.
+4. In the file that is created, add the following line. Note this assumes that there's a copy of the `installed-simulators` binary in the same folder as your `xcodeproj` file, and that your project lives in `project-dir`. Naturally, you'll probably want to change `project-dir` to be the name of your project.
+
+```bash
+$CI_WORKSPACE/installed-simulators --export-path $CI_WORKSPACE/project-dir/
+```
+
+5. Check in this new file and kick off an Xcode Cloud build. If it works, you'll see something like this:
+
+<img width="1374" alt="Screen_Shot_2022-01-19_at_9_47_40_AM" src="https://user-images.githubusercontent.com/282460/150154283-f909b346-1a6c-4dec-8523-3093ce2768d9.png">
+
